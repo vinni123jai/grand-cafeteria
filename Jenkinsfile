@@ -12,37 +12,32 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t grand-cafeteria .'
+                bat 'docker build -t grand-cafeteria .'
             }
         }
 
         stage('Stop Old Container') {
             steps {
-                sh '''
-                docker stop cafeteria || true
-                docker rm cafeteria || true
+                bat '''
+                docker stop cafeteria || exit 0
+                docker rm cafeteria || exit 0
                 '''
             }
         }
 
-        stage('Run New Container') {
+        stage('Run Docker Container') {
             steps {
-                sh '''
-                docker run -d \
-                --name cafeteria \
-                -p 8085:80 \
-                grand-cafeteria
-                '''
+                bat 'docker run -d -p 8085:80 --name cafeteria grand-cafeteria'
             }
         }
     }
 
     post {
         success {
-            echo '✅ CI/CD Pipeline Completed Successfully'
+            echo 'CI/CD pipeline completed successfully'
         }
         failure {
-            echo '❌ CI/CD Pipeline Failed'
+            echo 'CI/CD pipeline failed'
         }
     }
 }
