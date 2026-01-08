@@ -14,16 +14,16 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'
-                sh 'docker build -t grand-cafeteria .'
+                bat 'docker build -t grand-cafeteria .'
             }
         }
 
         stage('Stop Old Container') {
             steps {
                 echo 'Stopping old container if exists...'
-                sh '''
-                docker stop cafeteria || true
-                docker rm cafeteria || true
+                bat '''
+                docker stop cafeteria || exit 0
+                docker rm cafeteria || exit 0
                 '''
             }
         }
@@ -31,7 +31,7 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 echo 'Running Docker container...'
-                sh 'docker run -d -p 8085:80 --name cafeteria grand-cafeteria'
+                bat 'docker run -d -p 8085:80 --name cafeteria grand-cafeteria'
             }
         }
     }
