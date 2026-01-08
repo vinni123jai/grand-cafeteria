@@ -5,6 +5,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
+                echo 'Cloning GitHub repository...'
                 git branch: 'main',
                     url: 'https://github.com/vinni123jai/grand-cafeteria.git'
             }
@@ -12,32 +13,26 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t grand-cafeteria .'
+                echo 'Building Docker image...'
+                sh 'docker build -t grand-cafeteria .'
             }
         }
 
         stage('Stop Old Container') {
             steps {
-                bat '''
-                docker stop cafeteria || exit 0
-                docker rm cafeteria || exit 0
+                echo 'Stopping old container if exists...'
+                sh '''
+                docker stop cafeteria || true
+                docker rm cafeteria || true
                 '''
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                bat 'docker run -d -p 8085:80 --name cafeteria grand-cafeteria'
+                echo 'Running Docker container...'
+                sh 'docker run -d -p 8085:80 --name cafeteria grand-cafeteria'
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'CI/CD pipeline completed successfully'
-        }
-        failure {
-            echo 'CI/CD pipeline failed'
         }
     }
 }
