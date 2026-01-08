@@ -26,11 +26,28 @@
             <button class="md:hidden py-2 px-2" id="menu-toggle">
                 <i class="fas fa-2x fa-bars tm-text-gold"></i>
             </button>
-            <ul class="mb-3 md:mb-0 text-2xl font-normal flex justify-end flex-col md:flex-row">
+
+            <ul class="mb-3 md:mb-0 text-2xl font-normal flex justify-end flex-col md:flex-row items-center">
                 <li class="inline-block mb-4 mx-4"><a href="#intro" class="tm-text-gold">Intro</a></li>
                 <li class="inline-block mb-4 mx-4"><a href="#menu" class="tm-text-gold">Menu</a></li>
                 <li class="inline-block mb-4 mx-4"><a href="#about" class="tm-text-gold">About</a></li>
                 <li class="inline-block mb-4 mx-4"><a href="#contact" class="tm-text-gold">Contact</a></li>
+
+                <!-- REGISTER -->
+                <li class="inline-block mb-4 mx-8">
+                    <a href="register.html"
+                       class="tm-text-gold border px-5 py-1 rounded hover:bg-yellow-500 hover:text-black transition">
+                        Register
+                    </a>
+                </li>
+
+                <!-- LOGIN -->
+                <li class="inline-block mb-4 mx-8">
+                    <a href="login.html"
+                       class="tm-text-gold border px-5 py-1 rounded hover:bg-yellow-500 hover:text-black transition">
+                        Login
+                    </a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -53,7 +70,6 @@
                 Our Cafe Menu
             </h2>
         </div>
-        <!-- YOUR MENU ITEMS ARE UNCHANGED -->
     </div>
 </div>
 
@@ -113,46 +129,41 @@
 <script src="js/parallax.min.js"></script>
 <script src="js/jquery.singlePageNav.min.js"></script>
 
-<!-- ================= FIREBASE ================= -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-<script>
-window.onload = function () {
-
-  
+<!-- ================= FIREBASE CONTACT BACKEND ================= -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyBPlMEZNlEljz4nXqFdGQMHVGl5stDP5XE",
-    authDomain: "grand-cafeteria.firebaseapp.com",
-    projectId: "grand-cafeteria",
-    storageBucket: "grand-cafeteria.firebasestorage.app",
-    messagingSenderId: "295452465736",
-    appId: "1:295452465736:web:685e991d81a6eb6011567d"
+    apiKey: "AIzaSyAXDD-VqcEhh-PR83bGmW3i_7oTkJi4EJE",
+    authDomain: "cafeteria-contact-app.firebaseapp.com",
+    projectId: "cafeteria-contact-app",
+    storageBucket: "cafeteria-contact-app.firebasestorage.app",
+    messagingSenderId: "14964608074",
+    appId: "1:14964608074:web:5311af5e18f5cebaec2ab3"
   };
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-  const form = document.getElementById("contactForm");
-
-  form.addEventListener("submit", function (e) {
+  document.getElementById("contactForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    db.collection("orders").add({
-      name: document.getElementById("name").value,
-      email: document.getElementById("email").value,
-      message: document.getElementById("message").value,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    })
-    .then(() => {
-      alert("✅ Message sent successfully!");
-      form.reset();
-    })
-    .catch(err => alert("❌ " + err.message));
-  });
+    try {
+      await addDoc(collection(db, "contacts"), {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        message: document.getElementById("message").value,
+        createdAt: serverTimestamp()
+      });
 
-};
+      alert("✅ Message sent successfully!");
+      e.target.reset();
+    } catch (err) {
+      alert("❌ " + err.message);
+    }
+  });
 </script>
 
 </body>
