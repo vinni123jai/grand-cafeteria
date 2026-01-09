@@ -5,21 +5,21 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                echo 'Cloning repository...'
+                echo 'Checking out source code'
                 checkout scm
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                echo 'Building Docker image...'
+                echo 'Building Docker image'
                 bat 'docker build -t grand-cafeteria .'
             }
         }
 
-        stage('Stop Old Container') {
+        stage('Remove Old Container') {
             steps {
-                echo 'Stopping old container if exists...'
+                echo 'Removing old container if exists'
                 bat '''
                 docker stop cafeteria || exit 0
                 docker rm cafeteria || exit 0
@@ -27,9 +27,9 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Run New Container') {
             steps {
-                echo 'Running Docker container...'
+                echo 'Running new container'
                 bat 'docker run -d -p 8085:80 --name cafeteria grand-cafeteria'
             }
         }
@@ -37,10 +37,10 @@ pipeline {
 
     post {
         success {
-            echo 'Deployment successful!'
+            echo 'CI/CD pipeline completed successfully'
         }
         failure {
-            echo 'Deployment failed!'
+            echo 'CI/CD pipeline failed'
         }
     }
 }
