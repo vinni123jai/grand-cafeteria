@@ -5,9 +5,8 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                echo 'Cloning GitHub repository...'
-                git branch: 'main',
-                    url: 'https://github.com/vinni123jai/grand-cafeteria.git'
+                echo 'Cloning repository...'
+                checkout scm
             }
         }
 
@@ -33,6 +32,15 @@ pipeline {
                 echo 'Running Docker container...'
                 bat 'docker run -d -p 8085:80 --name cafeteria grand-cafeteria'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed!'
         }
     }
 }
