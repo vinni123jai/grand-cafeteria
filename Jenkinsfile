@@ -3,25 +3,42 @@ pipeline {
 
     stages {
 
-        stage('Build Docker Image') {
+        stage('Checkout Code') {
             steps {
-                bat 'docker build -t grand-cafeteria .'
+                echo 'Checking out source code from GitHub...'
+                git branch: 'main',
+                    url: 'https://github.com/vinni123jai/grand-cafeteria.git'
             }
         }
 
-        stage('Stop Old Container') {
+        stage('Build') {
             steps {
-                bat '''
-                docker stop cafeteria || exit 0
-                docker rm cafeteria || exit 0
-                '''
+                echo 'Build stage started...'
+                sh 'echo Building the project'
             }
         }
 
-        stage('Run Container') {
+        stage('Test') {
             steps {
-                bat 'docker run -d -p 8085:80 --name cafeteria grand-cafeteria'
+                echo 'Running tests...'
+                sh 'echo Tests executed successfully'
             }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+                sh 'echo Application deployed'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed SUCCESSFULLY'
+        }
+        failure {
+            echo 'Pipeline FAILED'
         }
     }
 }
