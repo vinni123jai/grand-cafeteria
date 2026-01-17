@@ -1,4 +1,4 @@
-name: Test GitHub Actions
+name: Deploy to EC2
 
 on:
   push:
@@ -6,12 +6,24 @@ on:
       - main
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run test command
-        run: echo "GitHub Actions is working for Grand Cafeteria!"
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_PORT }}
+          script: |
+            cd ~/grand-cafeteria
+            git pull origin main
+            docker stop cafeteria || true
+            docker rm cafeteria || true
+            docker build -t cafeteria .
+            docker run -d -p 8085:80 --name cafeteria cafeteria
